@@ -9,7 +9,6 @@ import Observation
 final class PlaybackService {
     enum PlaybackError: Error {
         case playlistNotFound
-        case emptyPlaylist
     }
 
     /// The tile whose playlist currently owns the queue (set by this app).
@@ -21,27 +20,37 @@ final class PlaybackService {
 
     private var player: SystemMusicPlayer { .shared }
 
-    func play(tile: Tile) async throws {
+    /// Queues the playlist item directly — no track fetch, no extra library
+    /// round trip — so audio starts as fast as the system player allows.
+    /// Pass the cached playlist from MusicService when available; the
+    /// library lookup only runs on a cache miss.
+    func play(tile: Tile, playlist cached: Playlist?) async throws {
         startingTileID = tile.id
         defer { startingTileID = nil }
 
-        var request = MusicLibraryRequest<Playlist>()
-        request.filter(matching: \.id, equalTo: MusicItemID(tile.playlistID))
-        let response = try await request.response()
-        guard let playlist = response.items.first else {
-            throw PlaybackError.playlistNotFound
-        }
-        let detailed = try await playlist.with([.tracks])
-        let tracks = detailed.tracks ?? []
-        guard !tracks.isEmpty else {
-            throw PlaybackError.emptyPlaylist
+        let playlist: Playlist
+        if let cached {
+            playlist = cached
+        } else {
+            var request = MusicLibraryRequest<Playlist>()
+            request.filter(matching: \.id, equalTo: MusicItemID(tile.playlistID))
+            guard let found = try await request.response().items.first else {
+                throw PlaybackError.playlistNotFound
+            }
+            playlist = found
         }
 
-        player.queue = SystemMusicPlayer.Queue(for: tracks)
+        player.queue = SystemMusicPlayer.Queue(for: [playlist])
         player.state.shuffleMode = tile.shuffle ? .songs : .off
         player.state.repeatMode = tile.repeatAll ? .all : MusicPlayer.RepeatMode.none
-        try await player.play()
+        // Optimistic, so the tile badge and Now Playing respond instantly.
         playingTileID = tile.id
+        do {
+            try await player.play()
+        } catch {
+            playingTileID = nil
+            throw error
+        }
     }
 
     func pause() {

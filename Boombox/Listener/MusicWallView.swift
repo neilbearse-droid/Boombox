@@ -93,11 +93,16 @@ struct MusicWallView: View {
         if settings.speakOnPlay {
             speech.speak("Playing \(tile.effectiveSpokenName)")
         }
+        // Navigate immediately — state stays visible while the audio spins
+        // up. If playback fails, pop back and show the friendly card.
+        path = [tile.id]
         Task {
             do {
-                try await playback.play(tile: tile)
-                path = [tile.id]
+                try await playback.play(
+                    tile: tile,
+                    playlist: music.playlist(withID: tile.playlistID))
             } catch {
+                path = []
                 showPlaybackError = true
                 if settings.speakOnPlay {
                     speech.speak("The music can't play right now.")
