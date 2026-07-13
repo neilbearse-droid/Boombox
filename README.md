@@ -103,6 +103,12 @@ Boombox/
 - Label text colour is picked per swatch by WCAG contrast ratio.
 - No alerts, no destructive actions, no purchases, no external links, and no
   autoplay anywhere in listener mode.
+- Explicit-content control (Settings → Content): with "Allow explicit
+  songs" off, explicit-tagged songs are stripped from the queue before
+  playback (slower tile start while filtering) and hidden from the
+  playlist builder. Defaults to allowed so updating doesn't change
+  existing behaviour; the builder shows an E badge on explicit songs
+  when they're allowed.
 - Listening metrics (parent mode → chart icon): tile taps are always
   logged; song changes are logged while the app is running (playback lives
   in the Music app's process, so songs played with Boombox fully closed

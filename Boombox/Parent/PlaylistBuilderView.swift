@@ -10,6 +10,11 @@ struct PlaylistBuilderView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(MusicService.self) private var music
     @Query(sort: \Tile.sortIndex) private var tiles: [Tile]
+    @Query private var allSettings: [AppSettings]
+
+    private var allowExplicit: Bool {
+        allSettings.first?.allowExplicit ?? true
+    }
 
     @State private var name = ""
     @State private var searchTerm = ""
@@ -73,7 +78,8 @@ struct PlaylistBuilderView: View {
                                 AlbumSongsView(
                                     album: album,
                                     draft: $draft,
-                                    previewPlayer: previewPlayer)
+                                    previewPlayer: previewPlayer,
+                                    allowExplicit: allowExplicit)
                             } label: {
                                 HStack(spacing: 12) {
                                     if let artwork = album.artwork {
@@ -99,7 +105,8 @@ struct PlaylistBuilderView: View {
                                 ArtistSongsView(
                                     artist: artist,
                                     draft: $draft,
-                                    previewPlayer: previewPlayer)
+                                    previewPlayer: previewPlayer,
+                                    allowExplicit: allowExplicit)
                             } label: {
                                 HStack(spacing: 12) {
                                     if let artwork = artist.artwork {
@@ -176,8 +183,13 @@ struct PlaylistBuilderView: View {
                 term: term, types: [Song.self, Album.self, Artist.self])
             request.limit = 15
             let response = try await request.response()
-            songs = Array(response.songs)
-            albums = Array(response.albums)
+            if allowExplicit {
+                songs = Array(response.songs)
+                albums = Array(response.albums)
+            } else {
+                songs = response.songs.filter { $0.contentRating != .explicit }
+                albums = response.albums.filter { $0.contentRating != .explicit }
+            }
             artists = Array(response.artists)
         } catch {
             songs = []
@@ -229,7 +241,15 @@ struct SongRow: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
             }
             VStack(alignment: .leading) {
-                Text(song.title).lineLimit(1)
+                HStack(spacing: 4) {
+                    Text(song.title).lineLimit(1)
+                    if song.contentRating == .explicit {
+                        Image(systemName: "e.square.fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .accessibilityLabel("Explicit")
+                    }
+                }
                 Text(song.artistName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -267,6 +287,7 @@ struct AlbumSongsView: View {
     let album: Album
     @Binding var draft: [Song]
     let previewPlayer: PreviewPlayer
+    var allowExplicit: Bool = true
 
     @State private var albumSongs: [Song] = []
     @State private var isLoading = true
@@ -297,6 +318,9 @@ struct AlbumSongsView: View {
                 if case .song(let song) = track { return song }
                 return nil
             }
+            if !allowExplicit {
+                albumSongs.removeAll { $0.contentRating == .explicit }
+            }
         }
     }
 }
@@ -306,6 +330,7 @@ struct ArtistSongsView: View {
     let artist: Artist
     @Binding var draft: [Song]
     let previewPlayer: PreviewPlayer
+    var allowExplicit: Bool = true
 
     @State private var topSongs: [Song] = []
     @State private var isLoading = true
@@ -333,6 +358,9 @@ struct ArtistSongsView: View {
             defer { isLoading = false }
             guard let detailed = try? await artist.with([.topSongs]) else { return }
             topSongs = Array(detailed.topSongs ?? [])
+            if !allowExplicit {
+                topSongs.removeAll { $0.contentRating == .explicit }
+            }
         }
     }
 }

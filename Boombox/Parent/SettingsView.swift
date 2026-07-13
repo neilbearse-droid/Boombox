@@ -40,6 +40,14 @@ private struct SettingsForm: View {
                 Toggle("Next Song button", isOn: $settings.showNextButton)
             }
 
+            Section {
+                Toggle("Allow explicit songs", isOn: $settings.allowExplicit)
+            } header: {
+                Text("Content")
+            } footer: {
+                Text("When off, songs marked explicit are skipped during playback and hidden in the playlist builder. Starting a tile takes slightly longer while filtering. iOS Screen Time can also block explicit music device-wide.")
+            }
+
             Section("Parent PIN") {
                 Button("Change PIN") {
                     showChangePIN = true

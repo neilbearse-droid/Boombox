@@ -9,6 +9,7 @@ import Observation
 final class PlaybackService {
     enum PlaybackError: Error {
         case playlistNotFound
+        case nothingPlayable
     }
 
     /// The tile whose playlist currently owns the queue (set by this app).
@@ -24,7 +25,10 @@ final class PlaybackService {
     /// round trip — so audio starts as fast as the system player allows.
     /// Pass the cached playlist from MusicService when available; the
     /// library lookup only runs on a cache miss.
-    func play(tile: Tile, playlist cached: Playlist?) async throws {
+    ///
+    /// With allowExplicit false the fast path can't be used: the track list
+    /// is fetched and explicit-tagged songs are stripped before queueing.
+    func play(tile: Tile, playlist cached: Playlist?, allowExplicit: Bool = true) async throws {
         startingTileID = tile.id
         defer { startingTileID = nil }
 
@@ -40,7 +44,18 @@ final class PlaybackService {
             playlist = found
         }
 
-        player.queue = SystemMusicPlayer.Queue(for: [playlist])
+        if allowExplicit {
+            player.queue = SystemMusicPlayer.Queue(for: [playlist])
+        } else {
+            let detailed = try await playlist.with([.tracks])
+            let cleanTracks = (detailed.tracks ?? []).filter {
+                $0.contentRating != .explicit
+            }
+            guard !cleanTracks.isEmpty else {
+                throw PlaybackError.nothingPlayable
+            }
+            player.queue = SystemMusicPlayer.Queue(for: cleanTracks)
+        }
         player.state.shuffleMode = tile.shuffle ? .songs : .off
         player.state.repeatMode = tile.repeatAll ? .all : MusicPlayer.RepeatMode.none
         // Optimistic, so the tile badge and Now Playing respond instantly.

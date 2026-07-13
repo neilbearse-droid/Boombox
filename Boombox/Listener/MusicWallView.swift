@@ -111,7 +111,8 @@ struct MusicWallView: View {
             do {
                 try await playback.play(
                     tile: tile,
-                    playlist: music.playlist(withID: tile.playlistID))
+                    playlist: music.playlist(withID: tile.playlistID),
+                    allowExplicit: settings.allowExplicit)
             } catch {
                 path = []
                 showPlaybackError = true

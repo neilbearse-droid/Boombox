@@ -8,6 +8,9 @@ final class AppSettings {
     var speakOnPlay: Bool = true
     var calmMode: Bool = false
     var showNextButton: Bool = false
+    /// When false, explicit-tagged songs are skipped in playback and hidden
+    /// in the playlist builder.
+    var allowExplicit: Bool = true
 
     init() {}
 
