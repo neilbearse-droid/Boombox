@@ -26,6 +26,11 @@ final class Tile {
     var repeatAll: Bool = true
     var isHidden: Bool = false
     var showInWidget: Bool = true
+    /// Optional daily window: the tile only appears on the wall between
+    /// these times (minutes of day; the window may wrap past midnight).
+    var hasTimeWindow: Bool = false
+    var windowStartMinutes: Int = 8 * 60
+    var windowEndMinutes: Int = 20 * 60
     var sortIndex: Int = 0
     var createdAt: Date = Date.now
 

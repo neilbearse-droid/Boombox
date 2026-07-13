@@ -11,6 +11,7 @@ struct RootView: View {
     @State private var playback = PlaybackService()
     @State private var speech = SpeechManager()
     @State private var metrics = MetricsLogger()
+    @State private var schedule = ScheduleService()
     @State private var settings: AppSettings?
     @State private var showParentArea = false
     @State private var gearHoldProgress: CGFloat = 0
@@ -30,14 +31,26 @@ struct RootView: View {
         .environment(playback)
         .environment(speech)
         .environment(metrics)
+        .environment(schedule)
         .task {
             if settings == nil {
                 settings = AppSettings.fetchOrCreate(in: modelContext)
             }
             metrics.start(context: modelContext, playback: playback)
             metrics.pruneOldEvents()
+            schedule.start(speech: speech)
             await music.refreshLibrary()
             await updateWidgetSnapshot()
+        }
+        .task {
+            // Drives quiet hours, the sleep timer, the daily budget, and
+            // the almost-done warning.
+            while !Task.isCancelled {
+                if let settings {
+                    schedule.tick(settings: settings)
+                }
+                try? await Task.sleep(for: .seconds(20))
+            }
         }
         .task {
             await music.observeSubscription()
@@ -56,6 +69,7 @@ struct RootView: View {
             ParentAreaView()
                 .environment(music)
                 .environment(playback)
+                .environment(schedule)
         }
     }
 

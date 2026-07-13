@@ -14,6 +14,16 @@ final class AppSettings {
     /// Ignores extra touches for a moment after each accepted tap, for
     /// listeners whose taps land several times.
     var reduceRepeatTaps: Bool = false
+    /// Heavier haptic on accepted taps so the listener feels the tap land.
+    var strongHaptics: Bool = false
+    /// Cap on tiles shown on the wall: 0 = all, 1 = one big tile, or 2/4.
+    var maxTiles: Int = 0
+    /// Quiet hours: wall sleeps and music soft-stops inside the window.
+    var quietHoursEnabled: Bool = false
+    var quietStartMinutes: Int = 21 * 60
+    var quietEndMinutes: Int = 7 * 60
+    /// Daily listening budget in minutes; 0 = no limit.
+    var dailyLimitMinutes: Int = 0
 
     init() {}
 

@@ -103,6 +103,23 @@ Boombox/
 - Label text colour is picked per swatch by WCAG contrast ratio.
 - No alerts, no destructive actions, no purchases, no external links, and no
   autoplay anywhere in listener mode.
+- Quiet hours (Settings → Schedule): the wall shows a calm "music is
+  asleep" card inside the window and music soft-stops — at the end of
+  the current song, with a 6-minute hard cap — after a spoken/visual
+  "music is almost done" warning two minutes ahead. The sleep timer
+  (30/60/90 min) is the one-night version of the same behaviour.
+- Daily listening budget (Settings → Schedule, off by default): counted
+  while the app runs; at the limit the wall rests for the day. Today's
+  minutes show in Settings and in Listening → Signals.
+- Reduced-choice mode (Settings → Music Wall → Tiles shown): cap the
+  wall at 4, 2, or one giant tile for overwhelming days.
+- Per-tile schedules (tile editor → Schedule): a tile can appear only
+  during a daily window, e.g. bedtime music in the evening; windows may
+  cross midnight.
+- Signals (Listening screen): listening minutes today, absorbed extra
+  touches (tap-acuity trend), and the loudest playback volume observed.
+- Stronger tap feedback (Settings → Touch): heavier haptic so accepted
+  taps are felt, which reduces re-tapping at the source.
 - Reduce repeat taps (Settings → Touch, off by default): for listeners
   whose taps land several times. One accepted wall tap per 1.5s across
   all tiles (stray touches often hit a neighbouring tile), pause/play

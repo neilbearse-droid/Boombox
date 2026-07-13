@@ -11,6 +11,22 @@ struct TileEditorView: View {
     @State private var emojiText: String = ""
     @State private var showAlbumPicker = false
 
+    /// Bridges a minutes-of-day Int to a DatePicker.
+    private func timeBinding(_ minutes: Binding<Int>) -> Binding<Date> {
+        Binding(
+            get: {
+                Calendar.current.date(
+                    bySettingHour: minutes.wrappedValue / 60,
+                    minute: minutes.wrappedValue % 60,
+                    second: 0, of: .now) ?? .now
+            },
+            set: { date in
+                let parts = Calendar.current.dateComponents(
+                    [.hour, .minute], from: date)
+                minutes.wrappedValue = (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
+            })
+    }
+
     var body: some View {
         Form {
             Section("Label") {
@@ -153,6 +169,24 @@ struct TileEditorView: View {
                 Toggle("Show in widget", isOn: $tile.showInWidget)
             } footer: {
                 Text("The widget shows the first six widget-enabled tiles in wall order.")
+            }
+
+            Section {
+                Toggle("Only at certain times", isOn: $tile.hasTimeWindow)
+                if tile.hasTimeWindow {
+                    DatePicker(
+                        "Appears at",
+                        selection: timeBinding($tile.windowStartMinutes),
+                        displayedComponents: .hourAndMinute)
+                    DatePicker(
+                        "Goes away at",
+                        selection: timeBinding($tile.windowEndMinutes),
+                        displayedComponents: .hourAndMinute)
+                }
+            } header: {
+                Text("Schedule")
+            } footer: {
+                Text("The tile only appears on the wall during this window — e.g. bedtime music in the evening. The window may cross midnight.")
             }
         }
         .navigationTitle("Edit Tile")

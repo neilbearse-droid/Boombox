@@ -16,17 +16,44 @@ struct SettingsView: View {
 
 private struct SettingsForm: View {
     @Bindable var settings: AppSettings
+    @Environment(ScheduleService.self) private var schedule
     @State private var showChangePIN = false
+
+    /// Bridges a minutes-of-day Int to a DatePicker.
+    private func timeBinding(_ minutes: Binding<Int>) -> Binding<Date> {
+        Binding(
+            get: {
+                Calendar.current.date(
+                    bySettingHour: minutes.wrappedValue / 60,
+                    minute: minutes.wrappedValue % 60,
+                    second: 0, of: .now) ?? .now
+            },
+            set: { date in
+                let parts = Calendar.current.dateComponents(
+                    [.hour, .minute], from: date)
+                minutes.wrappedValue = (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
+            })
+    }
 
     var body: some View {
         Form {
-            Section("Music Wall") {
+            Section {
                 Picker("Columns", selection: $settings.columns) {
                     Text("1").tag(1)
                     Text("2").tag(2)
                 }
                 .pickerStyle(.segmented)
                 Toggle("Show labels", isOn: $settings.showLabels)
+                Picker("Tiles shown", selection: $settings.maxTiles) {
+                    Text("All").tag(0)
+                    Text("One big tile").tag(1)
+                    Text("2").tag(2)
+                    Text("4").tag(4)
+                }
+            } header: {
+                Text("Music Wall")
+            } footer: {
+                Text("Fewer tiles can help on overwhelming days. Tiles keep their wall order.")
             }
 
             Section {
@@ -50,10 +77,61 @@ private struct SettingsForm: View {
 
             Section {
                 Toggle("Reduce repeat taps", isOn: $settings.reduceRepeatTaps)
+                Toggle("Stronger tap feedback", isOn: $settings.strongHaptics)
             } header: {
                 Text("Touch")
             } footer: {
-                Text("Ignores extra touches for a moment after each tap. Turn on if taps often register more than once.")
+                Text("Reduce repeat taps ignores extra touches for a moment after each tap. Stronger feedback makes accepted taps easier to feel.")
+            }
+
+            Section {
+                Toggle("Quiet hours", isOn: $settings.quietHoursEnabled)
+                if settings.quietHoursEnabled {
+                    DatePicker(
+                        "Music sleeps at",
+                        selection: timeBinding($settings.quietStartMinutes),
+                        displayedComponents: .hourAndMinute)
+                    DatePicker(
+                        "Music wakes at",
+                        selection: timeBinding($settings.quietEndMinutes),
+                        displayedComponents: .hourAndMinute)
+                }
+                Picker("Daily limit", selection: $settings.dailyLimitMinutes) {
+                    Text("Off").tag(0)
+                    Text("1 hour").tag(60)
+                    Text("2 hours").tag(120)
+                    Text("3 hours").tag(180)
+                    Text("4 hours").tag(240)
+                }
+            } header: {
+                Text("Schedule")
+            } footer: {
+                Text("A spoken and visual warning comes two minutes before music stops, and the stop lands at the end of the song. Today so far: \(schedule.todayMinutes) min. Listening is counted while Boombox is open.")
+            }
+
+            Section {
+                if let deadline = schedule.sleepDeadline {
+                    LabeledContent(
+                        "Music stops",
+                        value: deadline.formatted(date: .omitted, time: .shortened))
+                    Button("Cancel Sleep Timer", role: .destructive) {
+                        schedule.cancelSleepTimer()
+                    }
+                } else {
+                    HStack {
+                        ForEach([30, 60, 90], id: \.self) { minutes in
+                            Button("\(minutes) min") {
+                                schedule.armSleepTimer(minutes: minutes)
+                            }
+                            .buttonStyle(.bordered)
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                }
+            } header: {
+                Text("Sleep Timer")
+            } footer: {
+                Text("Stops the music once, tonight. Quiet hours handle every night.")
             }
 
             Section("Parent PIN") {

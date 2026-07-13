@@ -70,6 +70,14 @@ struct SetupChecklistView: View {
             } footer: {
                 Text("The app cannot cap volume itself. Turn on Settings > Sounds & Haptics > Headphone Safety > Reduce Loud Sounds.")
             }
+
+            Section {
+                Label("Touch Accommodations", systemImage: "hand.point.up.left")
+            } header: {
+                Text("Touch")
+            } footer: {
+                Text("If taps still land more than once with Reduce Repeat Taps on, try Settings > Accessibility > Touch > Touch Accommodations. Hold Duration requires a brief press before a touch counts, and Ignore Repeat treats repeated touches as one — enforced system-wide.")
+            }
         }
         .navigationTitle("Setup Checklist")
         .navigationBarTitleDisplayMode(.inline)

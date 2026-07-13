@@ -1,3 +1,4 @@
+import AVFoundation
 import Combine
 import Foundation
 import MusicKit
@@ -38,6 +39,15 @@ final class MetricsLogger {
                 songTitle: nil, artistName: nil))
     }
 
+    /// A touch swallowed by the debounce or repeat-tap guard. Surfaced in
+    /// the Listening screen as a tap-acuity signal.
+    func logIgnoredTap(_ tile: Tile) {
+        context?.insert(
+            PlayEvent(
+                kind: .tapIgnored, tileLabel: tile.label,
+                songTitle: nil, artistName: nil))
+    }
+
     private func recordCurrentSongIfNew() {
         guard let context,
             let entry = SystemMusicPlayer.shared.queue.currentEntry,
@@ -56,7 +66,8 @@ final class MetricsLogger {
         context.insert(
             PlayEvent(
                 kind: .song, tileLabel: tileLabel,
-                songTitle: entry.title, artistName: artist))
+                songTitle: entry.title, artistName: artist,
+                volume: Double(AVAudioSession.sharedInstance().outputVolume)))
     }
 
     private func currentTileLabel() -> String? {

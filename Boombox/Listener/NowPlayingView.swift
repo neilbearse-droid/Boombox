@@ -11,6 +11,7 @@ struct NowPlayingView: View {
 
     @Environment(MusicService.self) private var music
     @Environment(PlaybackService.self) private var playback
+    @Environment(ScheduleService.self) private var schedule
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \Tile.sortIndex) private var allTiles: [Tile]
     @ObservedObject private var playerState = SystemMusicPlayer.shared.state
@@ -34,6 +35,12 @@ struct NowPlayingView: View {
         VStack(spacing: 0) {
             backButton
                 .padding(.horizontal, 16)
+
+            if schedule.warningActive {
+                AlmostDoneBanner()
+                    .padding(.horizontal, 16)
+                    .padding(.top, 10)
+            }
 
             Spacer(minLength: 8)
 
@@ -79,7 +86,7 @@ struct NowPlayingView: View {
             // Shield the wall for a beat so a trailing touch can't start a
             // random tile after this screen dismisses.
             TapGuard.stamp("navigation")
-            Haptics.soft()
+            Haptics.tap(strong: settings.strongHaptics)
             dismiss()
         } label: {
             HStack(spacing: 16) {
@@ -154,7 +161,7 @@ struct NowPlayingView: View {
                 if settings.reduceRepeatTaps {
                     guard TapGuard.allow("pausePlay", cooldown: 1.5) else { return }
                 }
-                Haptics.soft()
+                Haptics.tap(strong: settings.strongHaptics)
                 if isPlaying {
                     playback.pause()
                 } else {
@@ -176,7 +183,7 @@ struct NowPlayingView: View {
                     if settings.reduceRepeatTaps {
                         guard TapGuard.allow("nextSong", cooldown: 1.5) else { return }
                     }
-                    Haptics.soft()
+                    Haptics.tap(strong: settings.strongHaptics)
                     Task { await playback.skipToNext() }
                 } label: {
                     Image(systemName: "forward.fill")

@@ -37,11 +37,21 @@ struct MetricsView: View {
     }
 
     @Query(sort: \PlayEvent.date, order: .reverse) private var events: [PlayEvent]
+    @Environment(ScheduleService.self) private var schedule
     @State private var range: TimeRange = .week
 
     private var filtered: [PlayEvent] {
         let cutoff = range.cutoff
-        return events.filter { $0.date >= cutoff }
+        return events.filter { $0.date >= cutoff && $0.kind != .tapIgnored }
+    }
+
+    private var ignoredTapCount: Int {
+        let cutoff = range.cutoff
+        return events.filter { $0.date >= cutoff && $0.kind == .tapIgnored }.count
+    }
+
+    private var loudestVolume: Double? {
+        songEvents.compactMap(\.volume).max()
     }
 
     private var songEvents: [PlayEvent] {
@@ -91,6 +101,19 @@ struct MetricsView: View {
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
+            }
+
+            Section {
+                LabeledContent("Listening today", value: "\(schedule.todayMinutes) min")
+                LabeledContent("Extra touches", value: "\(ignoredTapCount)")
+                if let loudestVolume {
+                    LabeledContent(
+                        "Loudest playback", value: "\(Int(loudestVolume * 100))%")
+                }
+            } header: {
+                Text("Signals")
+            } footer: {
+                Text("Extra touches are taps the app absorbed because they landed more than once — a rising count means tap acuity is struggling.")
             }
 
             if filtered.isEmpty {
