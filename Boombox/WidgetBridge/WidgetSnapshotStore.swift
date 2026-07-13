@@ -11,6 +11,21 @@ import WidgetKit
 /// slow parts (download, file writes) suspend rather than block.
 @MainActor
 enum WidgetSnapshotStore {
+    /// App-side status for the Setup Checklist: whether the app can reach
+    /// the shared container and how many widget tiles it last wrote.
+    static func diagnostic(tiles: [Tile]) -> (groupReachable: Bool, eligible: Int, wrote: Bool) {
+        let container = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: SharedWidgetConstants.appGroupID)
+        let eligible = tiles.filter { !$0.isHidden && $0.showInWidget }.count
+        var wrote = false
+        if let container {
+            let url = container.appendingPathComponent(
+                SharedWidgetConstants.snapshotFilename)
+            wrote = FileManager.default.fileExists(atPath: url.path)
+        }
+        return (container != nil, eligible, wrote)
+    }
+
     static func write(tiles: [Tile], calmMode: Bool, music: MusicService) async {
         guard
             let container = FileManager.default.containerURL(
