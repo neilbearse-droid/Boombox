@@ -1,4 +1,5 @@
 import MusicKit
+import SwiftData
 import SwiftUI
 
 /// Full-screen Now Playing. At most three controls, all 88 pt or larger:
@@ -11,6 +12,7 @@ struct NowPlayingView: View {
     @Environment(MusicService.self) private var music
     @Environment(PlaybackService.self) private var playback
     @Environment(\.dismiss) private var dismiss
+    @Query(sort: \Tile.sortIndex) private var allTiles: [Tile]
     @ObservedObject private var playerState = SystemMusicPlayer.shared.state
     @ObservedObject private var queue = SystemMusicPlayer.shared.queue
 
@@ -72,18 +74,28 @@ struct NowPlayingView: View {
 
     // MARK: - Pieces
 
+    /// Reads without words: a big arrow pointing at a miniature of the
+    /// listener's actual wall — their real tile colours and icons — so the
+    /// button is literally a picture of where it goes.
     private var backButton: some View {
         Button {
             dismiss()
         } label: {
-            HStack(spacing: 10) {
-                Image(systemName: "square.grid.2x2.fill")
-                    .font(.system(size: 24))
-                Text("Music")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+            HStack(spacing: 12) {
+                Image(systemName: "arrow.left")
+                    .font(.system(size: 30, weight: .heavy))
+                    .foregroundStyle(Color.primary)
+                MiniWallPreview(
+                    tiles: Array(allTiles.filter { !$0.isHidden }.prefix(4)),
+                    calmMode: settings.calmMode)
             }
-            .frame(minWidth: 140, minHeight: 88)
+            .padding(.horizontal, 18)
+            .frame(minWidth: 150, minHeight: 88)
+            .background(
+                RoundedRectangle(cornerRadius: 22)
+                    .fill(Color(.secondarySystemBackground)))
         }
+        .buttonStyle(TilePressStyle(calmMode: settings.calmMode))
         .accessibilityLabel("Music")
     }
 
