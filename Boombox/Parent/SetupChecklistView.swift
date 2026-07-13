@@ -60,7 +60,7 @@ struct SetupChecklistView: View {
                     Text("App Group")
                     Spacer()
                     Text(status.groupReachable ? "Connected" : "Not set up")
-                        .foregroundStyle(status.groupReachable ? .secondary : .orange)
+                        .foregroundStyle(status.groupReachable ? Color.secondary : Color.orange)
                 }
                 HStack {
                     statusIcon(status.wrote)
