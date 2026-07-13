@@ -10,6 +10,7 @@ struct RootView: View {
     @State private var music = MusicService()
     @State private var playback = PlaybackService()
     @State private var speech = SpeechManager()
+    @State private var metrics = MetricsLogger()
     @State private var settings: AppSettings?
     @State private var showParentArea = false
     @State private var gearHoldProgress: CGFloat = 0
@@ -28,10 +29,13 @@ struct RootView: View {
         .environment(music)
         .environment(playback)
         .environment(speech)
+        .environment(metrics)
         .task {
             if settings == nil {
                 settings = AppSettings.fetchOrCreate(in: modelContext)
             }
+            metrics.start(context: modelContext, playback: playback)
+            metrics.pruneOldEvents()
             await music.refreshLibrary()
         }
         .task {

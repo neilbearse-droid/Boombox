@@ -84,6 +84,7 @@ Boombox/
     PlaylistBuilderView.swift Catalogue search, previews, create playlist
     SettingsView.swift        Columns, labels, speech, Calm Mode, Next, PIN
     SetupChecklistView.swift  Permission, subscription, Guided Access, hearing
+    MetricsView.swift         Listening history: chart, top tiles/songs, feed
 ```
 
 ## Behaviour notes
@@ -102,6 +103,11 @@ Boombox/
 - Label text colour is picked per swatch by WCAG contrast ratio.
 - No alerts, no destructive actions, no purchases, no external links, and no
   autoplay anywhere in listener mode.
+- Listening metrics (parent mode → chart icon): tile taps are always
+  logged; song changes are logged while the app is running (playback lives
+  in the Music app's process, so songs played with Boombox fully closed
+  are invisible). History is pruned at 90 days, and stays readable after a
+  tile is deleted because labels are denormalized into the log.
 
 ## Things to verify on-device (can't be checked in CI)
 

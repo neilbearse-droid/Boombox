@@ -18,6 +18,14 @@ struct ParentModeView: View {
                         }
                         .accessibilityLabel("Settings")
                     }
+                    ToolbarItem(placement: .topBarLeading) {
+                        NavigationLink {
+                            MetricsView()
+                        } label: {
+                            Image(systemName: "chart.bar")
+                        }
+                        .accessibilityLabel("Listening")
+                    }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Done") { dismiss() }
                     }

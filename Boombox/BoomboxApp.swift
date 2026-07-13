@@ -7,6 +7,6 @@ struct BoomboxApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [Tile.self, AppSettings.self])
+        .modelContainer(for: [Tile.self, AppSettings.self, PlayEvent.self])
     }
 }

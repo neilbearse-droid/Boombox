@@ -8,6 +8,7 @@ struct MusicWallView: View {
     @Environment(MusicService.self) private var music
     @Environment(PlaybackService.self) private var playback
     @Environment(SpeechManager.self) private var speech
+    @Environment(MetricsLogger.self) private var metrics
     @Query(sort: \Tile.sortIndex) private var tiles: [Tile]
     @ObservedObject private var playerState = SystemMusicPlayer.shared.state
 
@@ -96,6 +97,7 @@ struct MusicWallView: View {
         // Navigate immediately — state stays visible while the audio spins
         // up. If playback fails, pop back and show the friendly card.
         path = [tile.id]
+        metrics.logTilePlay(tile)
         Task {
             do {
                 try await playback.play(
