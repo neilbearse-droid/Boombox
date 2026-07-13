@@ -7,9 +7,10 @@ import SwiftUI
 struct MiniWallPreview: View {
     let tiles: [Tile]
     let calmMode: Bool
+    var cellSize: CGFloat = 24
 
-    private let cell: CGFloat = 24
-    private let gap: CGFloat = 4
+    private var cell: CGFloat { cellSize }
+    private var gap: CGFloat { max(4, cellSize / 6) }
 
     var body: some View {
         VStack(spacing: gap) {
@@ -47,12 +48,12 @@ struct MiniWallPreview: View {
         switch tile.iconType {
         case .emoji:
             if let emoji = tile.iconValue, emoji.count == 1 {
-                Text(emoji).font(.system(size: 13))
+                Text(emoji).font(.system(size: cell * 0.55))
             }
         case .symbol:
             if let name = tile.iconValue, UIImage(systemName: name) != nil {
                 Image(systemName: name)
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: cell * 0.45, weight: .bold))
                     .foregroundStyle(textColor)
             }
         default:

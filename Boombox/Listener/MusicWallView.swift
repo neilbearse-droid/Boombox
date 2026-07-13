@@ -88,6 +88,14 @@ struct MusicWallView: View {
         if lastTapTileID == tile.id, now.timeIntervalSince(lastTapTime) < 0.5 {
             return
         }
+        // Reduce repeat taps: one accepted wall tap per 1.5s, on ANY tile
+        // (stray second touches often land on a neighbouring tile), and a
+        // brief shield after coming back from Now Playing so a trailing
+        // touch on the back button can't start a random tile.
+        if settings.reduceRepeatTaps {
+            if TapGuard.isCooling("navigation", cooldown: 1.0) { return }
+            guard TapGuard.allow("wall", cooldown: 1.5) else { return }
+        }
         lastTapTileID = tile.id
         lastTapTime = now
 

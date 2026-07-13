@@ -32,11 +32,8 @@ struct NowPlayingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                backButton
-                Spacer()
-            }
-            .padding(.horizontal, 12)
+            backButton
+                .padding(.horizontal, 16)
 
             Spacer(minLength: 8)
 
@@ -74,25 +71,29 @@ struct NowPlayingView: View {
 
     // MARK: - Pieces
 
-    /// Reads without words: a big arrow pointing at a miniature of the
-    /// listener's actual wall — their real tile colours and icons — so the
-    /// button is literally a picture of where it goes.
+    /// Reads without words: a full-width bar with a big arrow pointing at a
+    /// miniature of the listener's actual wall — their real tile colours and
+    /// icons — so the button is literally a picture of where it goes.
     private var backButton: some View {
         Button {
+            // Shield the wall for a beat so a trailing touch can't start a
+            // random tile after this screen dismisses.
+            TapGuard.stamp("navigation")
+            Haptics.soft()
             dismiss()
         } label: {
-            HStack(spacing: 12) {
+            HStack(spacing: 16) {
                 Image(systemName: "arrow.left")
-                    .font(.system(size: 30, weight: .heavy))
+                    .font(.system(size: 38, weight: .heavy))
                     .foregroundStyle(Color.primary)
                 MiniWallPreview(
                     tiles: Array(allTiles.filter { !$0.isHidden }.prefix(4)),
-                    calmMode: settings.calmMode)
+                    calmMode: settings.calmMode,
+                    cellSize: 32)
             }
-            .padding(.horizontal, 18)
-            .frame(minWidth: 150, minHeight: 88)
+            .frame(maxWidth: .infinity, minHeight: 100)
             .background(
-                RoundedRectangle(cornerRadius: 22)
+                RoundedRectangle(cornerRadius: 24)
                     .fill(Color(.secondarySystemBackground)))
         }
         .buttonStyle(TilePressStyle(calmMode: settings.calmMode))
@@ -150,6 +151,9 @@ struct NowPlayingView: View {
     private var controls: some View {
         HStack(spacing: 32) {
             Button {
+                if settings.reduceRepeatTaps {
+                    guard TapGuard.allow("pausePlay", cooldown: 1.5) else { return }
+                }
                 Haptics.soft()
                 if isPlaying {
                     playback.pause()
@@ -169,6 +173,9 @@ struct NowPlayingView: View {
 
             if settings.showNextButton {
                 Button {
+                    if settings.reduceRepeatTaps {
+                        guard TapGuard.allow("nextSong", cooldown: 1.5) else { return }
+                    }
                     Haptics.soft()
                     Task { await playback.skipToNext() }
                 } label: {

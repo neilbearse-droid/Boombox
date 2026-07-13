@@ -103,6 +103,11 @@ Boombox/
 - Label text colour is picked per swatch by WCAG contrast ratio.
 - No alerts, no destructive actions, no purchases, no external links, and no
   autoplay anywhere in listener mode.
+- Reduce repeat taps (Settings → Touch, off by default): for listeners
+  whose taps land several times. One accepted wall tap per 1.5s across
+  all tiles (stray touches often hit a neighbouring tile), pause/play
+  and Next cool down 1.5s, and the wall is shielded for 1s after the
+  Now Playing back button so a trailing touch can't start a random tile.
 - Explicit-content control (Settings → Content): with "Allow explicit
   songs" off, explicit-tagged songs are stripped from the queue before
   playback (slower tile start while filtering) and hidden from the

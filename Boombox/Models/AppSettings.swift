@@ -11,6 +11,9 @@ final class AppSettings {
     /// When false, explicit-tagged songs are skipped in playback and hidden
     /// in the playlist builder.
     var allowExplicit: Bool = true
+    /// Ignores extra touches for a moment after each accepted tap, for
+    /// listeners whose taps land several times.
+    var reduceRepeatTaps: Bool = false
 
     init() {}
 

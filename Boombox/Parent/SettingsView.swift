@@ -48,6 +48,14 @@ private struct SettingsForm: View {
                 Text("When off, songs marked explicit are skipped during playback and hidden in the playlist builder. Starting a tile takes slightly longer while filtering. iOS Screen Time can also block explicit music device-wide.")
             }
 
+            Section {
+                Toggle("Reduce repeat taps", isOn: $settings.reduceRepeatTaps)
+            } header: {
+                Text("Touch")
+            } footer: {
+                Text("Ignores extra touches for a moment after each tap. Turn on if taps often register more than once.")
+            }
+
             Section("Parent PIN") {
                 Button("Change PIN") {
                     showChangePIN = true
