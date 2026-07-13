@@ -7,6 +7,9 @@ import WidgetKit
 /// the widget-enabled tiles plus pre-rendered icon image files (photos and
 /// album covers are copied; playlist artwork is downloaded once at 300px).
 /// The widget extension only ever reads files — no MusicKit, no SwiftData.
+/// Main-actor-bound because it reads MusicService's playlist cache; the
+/// slow parts (download, file writes) suspend rather than block.
+@MainActor
 enum WidgetSnapshotStore {
     static func write(tiles: [Tile], calmMode: Bool, music: MusicService) async {
         guard
