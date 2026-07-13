@@ -9,10 +9,20 @@ struct PlaylistPickerView: View {
     @Environment(MusicService.self) private var music
     @Query(sort: \Tile.sortIndex) private var tiles: [Tile]
 
+    @State private var searchText = ""
+
+    private var filteredPlaylists: [Playlist] {
+        let term = searchText.trimmingCharacters(in: .whitespaces)
+        guard !term.isEmpty else { return music.libraryPlaylists }
+        return music.libraryPlaylists.filter {
+            $0.name.localizedCaseInsensitiveContains(term)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             List {
-                ForEach(music.libraryPlaylists, id: \.id) { playlist in
+                ForEach(filteredPlaylists, id: \.id) { playlist in
                     Button {
                         addTile(for: playlist)
                         dismiss()
@@ -39,12 +49,18 @@ struct PlaylistPickerView: View {
                     }
                 }
             }
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search playlists")
             .overlay {
                 if music.libraryPlaylists.isEmpty {
                     ContentUnavailableView(
                         "No playlists yet",
                         systemImage: "music.note.list",
                         description: Text("Build a new playlist, or add one in the Music app."))
+                } else if filteredPlaylists.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
                 }
             }
             .navigationTitle("Choose a Playlist")
