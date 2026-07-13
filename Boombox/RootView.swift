@@ -37,6 +37,7 @@ struct RootView: View {
             metrics.start(context: modelContext, playback: playback)
             metrics.pruneOldEvents()
             await music.refreshLibrary()
+            await updateWidgetSnapshot()
         }
         .task {
             await music.observeSubscription()
@@ -47,12 +48,22 @@ struct RootView: View {
             }
         }
         .fullScreenCover(isPresented: $showParentArea, onDismiss: {
-            Task { await music.refreshLibrary() }
+            Task {
+                await music.refreshLibrary()
+                await updateWidgetSnapshot()
+            }
         }) {
             ParentAreaView()
                 .environment(music)
                 .environment(playback)
         }
+    }
+
+    private func updateWidgetSnapshot() async {
+        guard let settings else { return }
+        let tiles = (try? modelContext.fetch(FetchDescriptor<Tile>())) ?? []
+        await WidgetSnapshotStore.write(
+            tiles: tiles, calmMode: settings.calmMode, music: music)
     }
 
     /// Visually quiet, responds only to a sustained 2-second hold, so stray

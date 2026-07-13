@@ -25,6 +25,7 @@ final class Tile {
     var shuffle: Bool = false
     var repeatAll: Bool = true
     var isHidden: Bool = false
+    var showInWidget: Bool = true
     var sortIndex: Int = 0
     var createdAt: Date = Date.now
 
@@ -57,6 +58,7 @@ final class Tile {
         self.shuffle = false
         self.repeatAll = true
         self.isHidden = false
+        self.showInWidget = true
         self.sortIndex = sortIndex
         self.createdAt = .now
     }

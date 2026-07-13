@@ -132,6 +132,28 @@ Boombox/
 - A live session with the actual listener before calling v1 done. This
   session outranks every other test.
 
+## Widgets
+
+Home Screen and Lock Screen widgets (BoomboxWidgets target), Timery-style:
+small = 1 tile, medium = 2, large = a 2×2 or 2×3 grid depending on how many
+tiles are widget-enabled. Lock Screen circular/rectangular widgets play the
+first widget tile. Tapping any widget tile deep-links (`boombox://play/<id>`)
+into the app, which starts playback immediately — widgets can't drive Apple
+Music playback from their own process on iOS 17.
+
+Data flow: the app writes a JSON snapshot plus pre-rendered icon files into
+the App Group container whenever tiles change (launch and parent-mode exit);
+the widget only reads files. Which tiles appear is the per-tile
+"Show in widget" toggle, first six in wall order.
+
+**Naming convention (required):** the widget bundle ID must be the app's
+bundle ID + `.Widgets`, and the `APP_GROUP_ID` build setting (project level)
+must be `group.` + the app's bundle ID. The code derives the group ID from
+this convention at runtime. If you change the app's bundle ID, update the
+widget target's bundle ID and `APP_GROUP_ID` to match. Both targets'
+entitlements reference `$(APP_GROUP_ID)`; automatic signing registers the
+group on first build.
+
 ## Distribution
 
 TestFlight via the paid developer account. Builds are valid 90 days;

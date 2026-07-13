@@ -71,6 +71,15 @@ struct MusicWallView: View {
                 showPlaybackError = false
             }
         }
+        .onOpenURL { url in
+            // boombox://play/<tile-uuid> from the Home/Lock Screen widgets.
+            guard url.scheme == "boombox", url.host == "play",
+                let id = UUID(uuidString: url.lastPathComponent),
+                let tile = tiles.first(where: { $0.id == id }),
+                !tile.isHidden, !music.isOrphaned(tile)
+            else { return }
+            handleTap(tile)
+        }
     }
 
     private func handleTap(_ tile: Tile) {

@@ -150,6 +150,9 @@ struct TileEditorView: View {
                     isOn: Binding(
                         get: { !tile.isHidden },
                         set: { tile.isHidden = !$0 }))
+                Toggle("Show in widget", isOn: $tile.showInWidget)
+            } footer: {
+                Text("The widget shows the first six widget-enabled tiles in wall order.")
             }
         }
         .navigationTitle("Edit Tile")
