@@ -20,10 +20,16 @@ struct WidgetTile: Codable, Identifiable {
 }
 
 enum SharedWidgetConstants {
-    /// Convention: the group ID is "group." + the app's bundle ID, and the
-    /// widget's bundle ID is the app's + ".Widgets". Keep the APP_GROUP_ID
-    /// build setting in the project aligned with this.
+    /// Single source of truth: the APP_GROUP_ID build setting, surfaced into
+    /// Info.plist (which the entitlement also uses, so they can't disagree).
+    /// Falls back to deriving from the bundle ID if the key is missing or
+    /// its build variable didn't resolve.
     static var appGroupID: String {
+        if let id = Bundle.main.object(forInfoDictionaryKey: "AppGroupID") as? String,
+            !id.isEmpty, !id.hasPrefix("$(")
+        {
+            return id
+        }
         var base = Bundle.main.bundleIdentifier ?? "com.example.Boombox"
         if base.hasSuffix(".Widgets") {
             base.removeLast(".Widgets".count)

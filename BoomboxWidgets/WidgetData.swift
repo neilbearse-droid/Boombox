@@ -18,9 +18,15 @@ struct WidgetTile: Codable, Identifiable {
 }
 
 enum WidgetStore {
-    /// "group." + the containing app's bundle ID (this extension's bundle ID
-    /// minus the ".Widgets" suffix). Matches the app's derivation.
+    /// Reads the App Group from Info.plist (fed by the APP_GROUP_ID build
+    /// setting, same value the entitlement uses), falling back to deriving
+    /// from the bundle ID. Must resolve to the SAME string the app uses.
     static var appGroupID: String {
+        if let id = Bundle.main.object(forInfoDictionaryKey: "AppGroupID") as? String,
+            !id.isEmpty, !id.hasPrefix("$(")
+        {
+            return id
+        }
         var base = Bundle.main.bundleIdentifier ?? "com.example.Boombox.Widgets"
         if base.hasSuffix(".Widgets") {
             base.removeLast(".Widgets".count)

@@ -174,13 +174,16 @@ the App Group container whenever tiles change (launch and parent-mode exit);
 the widget only reads files. Which tiles appear is the per-tile
 "Show in widget" toggle, first six in wall order.
 
-**Naming convention (required):** the widget bundle ID must be the app's
-bundle ID + `.Widgets`, and the `APP_GROUP_ID` build setting (project level)
-must be `group.` + the app's bundle ID. The code derives the group ID from
-this convention at runtime. If you change the app's bundle ID, update the
-widget target's bundle ID and `APP_GROUP_ID` to match. Both targets'
-entitlements reference `$(APP_GROUP_ID)`; automatic signing registers the
-group on first build.
+**App Group (required, single source of truth):** the `APP_GROUP_ID` build
+setting (project level, inherited by both targets) is *the* group ID. Both
+entitlements reference `$(APP_GROUP_ID)`, and both targets' Info.plist carry
+an `AppGroupID` key set from the same variable — so the value the app is
+entitled to and the value the code reads at runtime are always the same
+string. Set `APP_GROUP_ID` once to `group.<your-bundle-id>` and make sure
+the App Groups capability (Signing & Capabilities, both targets) has that
+group checked. If the widget shows "Open Boombox to set up tiles," the App
+Group isn't lining up — verify both targets have the App Groups capability
+enabled with the group matching `APP_GROUP_ID`, then run the app once.
 
 ## Business model
 
