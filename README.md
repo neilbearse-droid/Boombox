@@ -182,6 +182,21 @@ widget target's bundle ID and `APP_GROUP_ID` to match. Both targets'
 entitlements reference `$(APP_GROUP_ID)`; automatic signing registers the
 group on first build.
 
+## Business model
+
+Free, everything unlocked, forever. A tip jar (Settings → Support Boombox,
+behind the parent PIN — money never exists in listener mode) offers three
+one-time consumable tips that unlock nothing.
+
+App Store Connect setup: create three **consumable** in-app purchases with
+product IDs `<your-bundle-id>.tip.small`, `.tip.medium`, `.tip.large`
+(suggested display names "Nice Tip" / "Generous Tip" / "Amazing Tip";
+suggested prices $2.99 / $9.99 / $19.99 — any tiers work, the UI sorts by
+price and shows localized names/prices from the store). The product IDs
+derive from the bundle ID at runtime, so they track a bundle-ID change
+automatically. Tips load only once the IAPs exist in App Store Connect;
+TestFlight uses the sandbox and won't charge real money.
+
 ## Distribution
 
 TestFlight via the paid developer account. Builds are valid 90 days;

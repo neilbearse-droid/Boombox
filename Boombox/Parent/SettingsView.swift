@@ -145,6 +145,16 @@ private struct SettingsForm: View {
                     SetupChecklistView()
                 }
             }
+
+            Section {
+                NavigationLink {
+                    TipJarView()
+                } label: {
+                    Label("Support Boombox", systemImage: "heart")
+                }
+            } footer: {
+                Text("Boombox is free. Tips are optional and unlock nothing.")
+            }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
