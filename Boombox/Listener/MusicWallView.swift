@@ -54,7 +54,7 @@ struct MusicWallView: View {
                         }
                     }
                     .padding(16)
-                    .padding(.bottom, 72)
+                    .padding(.bottom, 96)
                 }
             }
             .background(Color(.systemBackground))

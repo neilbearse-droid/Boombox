@@ -97,9 +97,16 @@ struct NowPlayingView: View {
                 RoundedRectangle(cornerRadius: 24)
                     .fill(swatch.background(calmMode: settings.calmMode))
                     .frame(width: 300, height: 300)
-                if tile.iconType == .emoji, let emoji = tile.iconValue {
+                if tile.iconType == .emoji, let emoji = tile.iconValue, emoji.count == 1 {
                     Text(emoji).font(.system(size: 130))
-                } else if tile.iconType == .photo,
+                } else if tile.iconType == .symbol,
+                    let name = tile.iconValue,
+                    UIImage(systemName: name) != nil
+                {
+                    Image(systemName: name)
+                        .font(.system(size: 130, weight: .semibold))
+                        .foregroundStyle(swatch.textColor(calmMode: settings.calmMode))
+                } else if tile.iconType == .photo || tile.iconType == .albumCover,
                     let filename = tile.iconValue,
                     let image = PhotoStore.load(filename)
                 {

@@ -21,8 +21,12 @@ Every decision flows from four principles:
 - Playback through `SystemMusicPlayer`: music survives backgrounding and
   force-quit, lock screen / Control Centre / AirPlay work natively, and no
   background-audio entitlement is needed.
+- Tile icons: the playlist's own artwork, one recognizable album cover
+  picked from the playlist (downloaded once and cached locally), an emoji,
+  a curated SF Symbol, or a photo from the camera roll.
 - 4-digit parent PIN in the Keychain, behind a 2-second hold on a quiet
-  corner gear. Five failed attempts → one-minute lockout. No recovery in v1.
+  corner gear (72 pt target, 60 pt drift tolerance, progress ring while
+  holding). Five failed attempts → one-minute lockout. No recovery in v1.
 - Single device, single Apple ID. The app lives on the listener's iPhone.
 
 ## Project setup

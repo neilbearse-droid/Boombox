@@ -119,7 +119,9 @@ struct TileManagerView: View {
     }
 
     private func delete(_ tile: Tile) {
-        if tile.iconType == .photo, let filename = tile.iconValue {
+        if tile.iconType == .photo || tile.iconType == .albumCover,
+            let filename = tile.iconValue
+        {
             PhotoStore.delete(filename)
         }
         modelContext.delete(tile)
@@ -163,8 +165,16 @@ private struct TileManagerRow: View {
                 .frame(width: 44, height: 44)
             switch tile.iconType {
             case .emoji:
-                Text(tile.iconValue ?? "🎵").font(.system(size: 24))
-            case .photo:
+                if let emoji = tile.iconValue, emoji.count == 1 {
+                    Text(emoji).font(.system(size: 24))
+                }
+            case .symbol:
+                if let name = tile.iconValue, UIImage(systemName: name) != nil {
+                    Image(systemName: name)
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(swatch.textColor(calmMode: false))
+                }
+            case .photo, .albumCover:
                 if let filename = tile.iconValue, let image = PhotoStore.load(filename) {
                     Image(uiImage: image)
                         .resizable()

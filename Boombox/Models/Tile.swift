@@ -2,8 +2,14 @@ import Foundation
 import SwiftData
 
 enum TileIconType: String, Codable, CaseIterable {
+    /// The playlist's own artwork.
     case artwork
+    /// One album cover from the playlist, chosen by the parent and cached
+    /// locally (iconValue is a filename in Application Support).
+    case albumCover
     case emoji
+    /// An SF Symbol name (iconValue is the symbol name).
+    case symbol
     case photo
 }
 

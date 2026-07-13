@@ -62,9 +62,22 @@ struct TileButton: View {
     private var icon: some View {
         switch tile.iconType {
         case .emoji:
-            Text(tile.iconValue ?? "🎵")
-                .font(.system(size: iconSize))
-        case .photo:
+            if let emoji = tile.iconValue, emoji.count == 1 {
+                Text(emoji)
+                    .font(.system(size: iconSize))
+            } else {
+                placeholderIcon
+            }
+        case .symbol:
+            if let name = tile.iconValue, UIImage(systemName: name) != nil {
+                Image(systemName: name)
+                    .font(.system(size: iconSize * 0.7, weight: .semibold))
+                    .foregroundStyle(swatch.textColor(calmMode: calmMode))
+                    .frame(width: iconSize, height: iconSize)
+            } else {
+                placeholderIcon
+            }
+        case .photo, .albumCover:
             if let filename = tile.iconValue, let image = PhotoStore.load(filename) {
                 Image(uiImage: image)
                     .resizable()

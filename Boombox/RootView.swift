@@ -12,6 +12,7 @@ struct RootView: View {
     @State private var speech = SpeechManager()
     @State private var settings: AppSettings?
     @State private var showParentArea = false
+    @State private var gearHoldProgress: CGFloat = 0
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -51,22 +52,45 @@ struct RootView: View {
     }
 
     /// Visually quiet, responds only to a sustained 2-second hold, so stray
-    /// taps do nothing. VoiceOver users can activate it directly.
+    /// taps do nothing. A generous drift tolerance keeps the hold alive when
+    /// the finger wobbles, and a ring fills to show the hold is working.
+    /// VoiceOver users can activate it directly.
     private var gearButton: some View {
-        Image(systemName: "gearshape.fill")
-            .font(.system(size: 20))
-            .foregroundStyle(Color.gray.opacity(0.35))
-            .frame(width: 56, height: 56)
-            .contentShape(Rectangle())
-            .onLongPressGesture(minimumDuration: 2) {
-                showParentArea = true
+        ZStack {
+            Circle()
+                .trim(from: 0, to: gearHoldProgress)
+                .stroke(
+                    Color.gray.opacity(0.7),
+                    style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .frame(width: 48, height: 48)
+            Image(systemName: "gearshape.fill")
+                .font(.system(size: 22))
+                .foregroundStyle(Color.gray.opacity(0.45))
+        }
+        .frame(width: 72, height: 72)
+        .contentShape(Rectangle())
+        .onLongPressGesture(minimumDuration: 2, maximumDistance: 60) {
+            gearHoldProgress = 0
+            Haptics.soft()
+            showParentArea = true
+        } onPressingChanged: { pressing in
+            if pressing {
+                withAnimation(.linear(duration: 2)) {
+                    gearHoldProgress = 1
+                }
+            } else {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    gearHoldProgress = 0
+                }
             }
-            .accessibilityLabel("Setup")
-            .accessibilityHint("Hold for two seconds")
-            .accessibilityAddTraits(.isButton)
-            .accessibilityAction {
-                showParentArea = true
-            }
-            .padding(4)
+        }
+        .accessibilityLabel("Setup")
+        .accessibilityHint("Hold for two seconds")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction {
+            showParentArea = true
+        }
+        .padding(8)
     }
 }
