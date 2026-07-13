@@ -23,8 +23,15 @@ struct TilesWidgetView: View {
             Text("Open Boombox to set up tiles.")
                 .font(.caption2)
                 .multilineTextAlignment(.center)
+            if family == .systemMedium || family == .systemLarge {
+                Text(WidgetStore.diagnostic())
+                    .font(.system(size: 9))
+                    .foregroundStyle(.tertiary)
+                    .multilineTextAlignment(.center)
+            }
         }
         .foregroundStyle(.secondary)
+        .padding(8)
     }
 
     @ViewBuilder

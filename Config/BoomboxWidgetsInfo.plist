@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AppGroupID</key>
-	<string>$(APP_GROUP_ID)</string>
+	<string>group.com.neilbearse.Boombox</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

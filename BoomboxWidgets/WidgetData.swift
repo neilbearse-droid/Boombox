@@ -58,6 +58,22 @@ enum WidgetStore {
         URL(string: "boombox://play/\(tile.id.uuidString)")
             ?? URL(string: "boombox://play")!
     }
+
+    /// One-line explanation of why the widget has no tiles, so setup
+    /// problems are visible instead of silent.
+    static func diagnostic() -> String {
+        guard let container = containerURL else {
+            return "No App Group. Enable App Groups on the widget target with \(appGroupID)."
+        }
+        let url = container.appendingPathComponent("widget-tiles.json")
+        if !FileManager.default.fileExists(atPath: url.path) {
+            return "App Group OK. Open Boombox once to send tiles."
+        }
+        if let snapshot = load() {
+            return "Received \(snapshot.tiles.count) tiles. Turn on “Show in widget”."
+        }
+        return "Data unreadable."
+    }
 }
 
 /// Widget-side copy of the app's 8-swatch palette, including Calm Mode

@@ -54,6 +54,28 @@ struct SetupChecklistView: View {
             }
 
             Section {
+                let status = WidgetSnapshotStore.diagnostic(tiles: tiles)
+                HStack {
+                    statusIcon(status.groupReachable)
+                    Text("App Group")
+                    Spacer()
+                    Text(status.groupReachable ? "Connected" : "Not set up")
+                        .foregroundStyle(status.groupReachable ? .secondary : .orange)
+                }
+                HStack {
+                    statusIcon(status.wrote)
+                    Text("Widget data sent")
+                    Spacer()
+                    Text("\(status.eligible) tiles")
+                        .foregroundStyle(.secondary)
+                }
+            } header: {
+                Text("Widgets")
+            } footer: {
+                Text(SharedWidgetConstants.appGroupID)
+            }
+
+            Section {
                 Link(destination: guidedAccessURL) {
                     Label("How to set up Guided Access", systemImage: "lock.iphone")
                 }
