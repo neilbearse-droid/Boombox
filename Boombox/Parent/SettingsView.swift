@@ -95,10 +95,24 @@ private struct SettingsForm: View {
                     Text("Normal").tag(1.0)
                     Text("Slower").tag(0.75)
                 }
+                Picker("Dim screen", selection: $settings.screenDim) {
+                    Text("Off").tag(0.0)
+                    Text("Low").tag(0.15)
+                    Text("Medium").tag(0.3)
+                    Text("High").tag(0.45)
+                }
             } header: {
                 Text("Seeing & Hearing")
             } footer: {
-                Text("Larger text and bold tile borders help low vision. A slower speaking voice is easier to follow. For a listener who is deaf or hard of hearing, turn on Music Haptics (see the Setup Checklist) to feel the beat.")
+                Text("Larger text and bold tile borders help low vision. Dimming eases light sensitivity. A slower speaking voice is easier to follow. For a listener who is deaf or hard of hearing, turn on Music Haptics (see the Setup Checklist) to feel the beat.")
+            }
+
+            Section {
+                Toggle("Show words on Now Playing", isOn: $settings.showLyrics)
+            } header: {
+                Text("Lyrics")
+            } footer: {
+                Text("Shows big-text lyrics that follow along with the song, in place of the artwork. Words come from a free community lyrics service (LRCLIB), so some songs won't have them — and they aren't Apple's official lyrics.")
             }
 
             Section {

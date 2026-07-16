@@ -25,6 +25,14 @@ struct RootView: View {
             } else {
                 Color(.systemBackground).ignoresSafeArea()
             }
+            // Soft dimming for light sensitivity. Never blocks taps, and
+            // parent mode (a full-screen cover) presents above it at full
+            // brightness for configuration.
+            if let dim = settings?.screenDim, dim > 0 {
+                Color.black.opacity(dim)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+            }
             gearButton
         }
         .environment(music)

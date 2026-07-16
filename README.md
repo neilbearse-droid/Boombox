@@ -122,11 +122,20 @@ Boombox/
   taps are felt, which reduces re-tapping at the source.
 - Seeing & Hearing (Settings): parent-set text size (Normal/Large/Huge)
   for labels and Now Playing, high-contrast tile borders (auto-contrast
-  colour) for low vision, and an adjustable speaking speed for spoken
-  confirmations. Music Haptics (deaf / hard of hearing) is pointed to in
+  colour) for low vision, an adjustable speaking speed for spoken
+  confirmations, and a soft screen-dim (Off/Low/Medium/High) for light
+  sensitivity. Music Haptics (deaf / hard of hearing) is pointed to in
   the Setup Checklist — it's an iOS system feature that taps out the beat
   through the Taptic Engine and works automatically with Boombox's Apple
   Music playback.
+- Photo and album-cover tiles fill the whole tile (a big recognizable
+  face reads far better than a small square), with a bottom scrim so the
+  label stays legible.
+- Lyrics (Settings → Lyrics, off by default): big-text, follow-along
+  lyrics shown in place of the artwork on Now Playing. Apple Music does
+  not expose lyrics to third-party apps via MusicKit, so words come from
+  LRCLIB (a free, open community source) with a graceful "no words"
+  fallback; synced lyrics highlight and auto-scroll the current line.
 - Reduce repeat taps (Settings → Touch, off by default): for listeners
   whose taps land several times. One accepted wall tap per 1.5s across
   all tiles (stray touches often hit a neighbouring tile), pause/play

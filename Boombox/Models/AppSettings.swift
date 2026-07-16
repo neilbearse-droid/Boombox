@@ -30,6 +30,10 @@ final class AppSettings {
     var speechRate: Double = 1.0
     /// Thick, auto-contrast borders on tiles for low vision.
     var highContrastTiles: Bool = false
+    /// Show big-text lyrics on Now Playing (best-effort, community source).
+    var showLyrics: Bool = false
+    /// Dim overlay strength on the listener screens: 0 off … ~0.45 high.
+    var screenDim: Double = 0
 
     init() {}
 

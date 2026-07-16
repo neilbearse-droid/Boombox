@@ -44,8 +44,17 @@ struct NowPlayingView: View {
 
             Spacer(minLength: 8)
 
-            artworkView
-                .padding(.horizontal, 32)
+            if settings.showLyrics {
+                LyricsPanel(
+                    song: currentSong,
+                    textScale: settings.textScale,
+                    calmMode: settings.calmMode)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 8)
+            } else {
+                artworkView
+                    .padding(.horizontal, 32)
+            }
 
             VStack(spacing: 8) {
                 Text(tile.label)

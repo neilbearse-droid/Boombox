@@ -21,23 +21,37 @@ struct TileButton: View {
     private var swatch: TileSwatch { TilePalette.swatch(tile.colourID) }
     private var iconSize: CGFloat { columns == 1 ? 108 : 84 }
 
+    /// Photo and album-cover tiles fill the whole surface — a big, recognizable
+    /// face reads far better than a small square, especially for elderly or
+    /// low-vision listeners. Other icon types keep the icon-over-swatch layout.
+    private var fullBleedImage: UIImage? {
+        guard tile.iconType == .photo || tile.iconType == .albumCover,
+            let filename = tile.iconValue
+        else { return nil }
+        return PhotoStore.load(filename)
+    }
+
     var body: some View {
         Button(action: action) {
             ZStack(alignment: .topTrailing) {
-                VStack(spacing: 10) {
-                    icon
-                    if showLabel && !tile.label.isEmpty {
-                        Text(tile.label)
-                            .font(.system(
-                                size: 22 * textScale, weight: .semibold, design: .rounded))
-                            .foregroundStyle(swatch.textColor(calmMode: calmMode))
-                            .lineLimit(2)
-                            .multilineTextAlignment(.center)
-                            .minimumScaleFactor(0.7)
+                if let image = fullBleedImage {
+                    fullBleedContent(image)
+                } else {
+                    VStack(spacing: 10) {
+                        icon
+                        if showLabel && !tile.label.isEmpty {
+                            Text(tile.label)
+                                .font(.system(
+                                    size: 22 * textScale, weight: .semibold, design: .rounded))
+                                .foregroundStyle(swatch.textColor(calmMode: calmMode))
+                                .lineLimit(2)
+                                .multilineTextAlignment(.center)
+                                .minimumScaleFactor(0.7)
+                        }
                     }
+                    .padding(12)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding(12)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 if isCurrent {
                     EqualizerBadge(animated: isAudiblyPlaying && !calmMode)
@@ -55,6 +69,7 @@ struct TileButton: View {
             .background(
                 RoundedRectangle(cornerRadius: 24)
                     .fill(swatch.background(calmMode: calmMode)))
+            .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(
                 RoundedRectangle(cornerRadius: 24)
                     .strokeBorder(
@@ -64,6 +79,34 @@ struct TileButton: View {
         .buttonStyle(TilePressStyle(calmMode: calmMode))
         .accessibilityLabel(tile.label)
         .accessibilityHint(isCurrent ? "Now playing" : "Plays this music")
+    }
+
+    /// A photo/album image filling the tile, with a bottom scrim so the white
+    /// label stays legible over any image.
+    private func fullBleedContent(_ image: UIImage) -> some View {
+        Image(uiImage: image)
+            .resizable()
+            .scaledToFill()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(alignment: .bottom) {
+                if showLabel && !tile.label.isEmpty {
+                    Text(tile.label)
+                        .font(.system(
+                            size: 22 * textScale, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .minimumScaleFactor(0.7)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 8)
+                        .background(
+                            LinearGradient(
+                                colors: [.black.opacity(0.7), .black.opacity(0)],
+                                startPoint: .bottom, endPoint: .top))
+                }
+            }
+            .clipped()
     }
 
     @ViewBuilder
