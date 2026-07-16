@@ -28,6 +28,10 @@ final class AppSettings {
     var textScale: Double = 1.0
     /// Spoken-confirmation speed multiplier: 1.0 normal, 0.75 slower.
     var speechRate: Double = 1.0
+    /// Spoken-confirmation pitch: 1.0 normal, 0.9 plainer / less sing-song.
+    var speechPitch: Double = 1.0
+    /// First-run onboarding has been completed.
+    var hasOnboarded: Bool = false
     /// Thick, auto-contrast borders on tiles for low vision.
     var highContrastTiles: Bool = false
     /// Show big-text lyrics on Now Playing (best-effort, community source).

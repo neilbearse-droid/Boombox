@@ -201,6 +201,17 @@ group checked. If the widget shows "Open Boombox to set up tiles," the App
 Group isn't lining up — verify both targets have the App Groups capability
 enabled with the group matching `APP_GROUP_ID`, then run the app once.
 
+## Onboarding & caregiver setup
+
+First entry to Setup runs a short guided flow (`OnboardingView`): welcome,
+Apple Music permission priming, a hearing-safety step (Reduce Loud Sounds —
+the app can't cap volume, so this is raised up front, not buried), and a
+"make it theirs" step that nudges toward *their* words and *their* photos.
+Shown once (`AppSettings.hasOnboarded`). Settings is organised into
+categories (Music Wall, Sound & Speech, Seeing & Hearing, Touch, Schedule &
+Limits, Lyrics, Content) rather than one long form. Language is
+caregiver-neutral, never "parent," so the framing respects an adult listener.
+
 ## Business model
 
 Free, everything unlocked, forever. A tip jar (Settings → Support Boombox,

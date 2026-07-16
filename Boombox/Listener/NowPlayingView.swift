@@ -100,15 +100,20 @@ struct NowPlayingView: View {
             Haptics.tap(strong: settings.strongHaptics)
             dismiss()
         } label: {
-            HStack(spacing: 16) {
+            HStack(spacing: 18) {
+                // The arrow is the primary signal — big and unmistakable.
                 Image(systemName: "arrow.left")
-                    .font(.system(size: 38, weight: .heavy))
+                    .font(.system(size: 52, weight: .heavy))
                     .foregroundStyle(Color.primary)
+                // The miniature reinforces the destination; smaller and quieter.
                 MiniWallPreview(
                     tiles: Array(allTiles.filter { !$0.isHidden }.prefix(4)),
                     calmMode: settings.calmMode,
-                    cellSize: 32)
+                    cellSize: 22)
+                .opacity(0.85)
+                Spacer(minLength: 0)
             }
+            .padding(.horizontal, 24)
             .frame(maxWidth: .infinity, minHeight: 100)
             .background(
                 RoundedRectangle(cornerRadius: 24)

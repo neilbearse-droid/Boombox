@@ -16,6 +16,9 @@ final class SpeechManager {
     /// Multiplies the base speech rate; set from AppSettings.speechRate so a
     /// slower voice is easier to parse for some listeners.
     @ObservationIgnored var rateMultiplier: Double = 1.0
+    /// Voice pitch; set from AppSettings.speechPitch. Lower reads as plainer
+    /// and less sing-song, which some adult listeners prefer.
+    @ObservationIgnored var pitchMultiplier: Double = 1.0
 
     init() {
         delegateProxy.onSpeechDone = { [weak self] in
@@ -37,6 +40,7 @@ final class SpeechManager {
         let utterance = AVSpeechUtterance(string: text)
         utterance.rate =
             AVSpeechUtteranceDefaultSpeechRate * 0.9 * Float(rateMultiplier)
+        utterance.pitchMultiplier = Float(pitchMultiplier)
         synthesizer.speak(utterance)
     }
 

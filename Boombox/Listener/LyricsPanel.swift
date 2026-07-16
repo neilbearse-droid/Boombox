@@ -19,10 +19,19 @@ struct LyricsPanel: View {
             } else if let words = lyrics.current {
                 lyricsList(words)
             } else {
+                // Calm, not an error: many songs simply have no words on file.
                 centered {
-                    Text(lyrics.failed ? "No words for this song." : "…")
-                        .font(.system(size: 20 * textScale, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.secondary)
+                    VStack(spacing: 14) {
+                        Image(systemName: "music.note")
+                            .font(.system(size: 44))
+                            .foregroundStyle(.tertiary)
+                        Text("Just enjoy the music.")
+                            .font(.system(
+                                size: 22 * textScale, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(24)
                 }
             }
         }

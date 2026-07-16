@@ -64,6 +64,19 @@ enum TilePalette {
         TileSwatch(id: 7, name: "Pink",
                    standard: .init(r: 0.80, g: 0.30, b: 0.55),
                    calm: .init(r: 0.82, g: 0.64, b: 0.72)),
+        // Calmer, more mature options — age-respectful for adult listeners.
+        TileSwatch(id: 8, name: "Slate",
+                   standard: .init(r: 0.28, g: 0.34, b: 0.42),
+                   calm: .init(r: 0.55, g: 0.60, b: 0.66)),
+        TileSwatch(id: 9, name: "Sage",
+                   standard: .init(r: 0.40, g: 0.48, b: 0.40),
+                   calm: .init(r: 0.64, g: 0.70, b: 0.63)),
+        TileSwatch(id: 10, name: "Taupe",
+                   standard: .init(r: 0.47, g: 0.40, b: 0.34),
+                   calm: .init(r: 0.68, g: 0.63, b: 0.57)),
+        TileSwatch(id: 11, name: "Plum",
+                   standard: .init(r: 0.36, g: 0.24, b: 0.36),
+                   calm: .init(r: 0.60, g: 0.52, b: 0.60)),
     ]
 
     static func swatch(_ id: Int) -> TileSwatch {

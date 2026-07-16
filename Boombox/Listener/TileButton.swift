@@ -88,6 +88,7 @@ struct TileButton: View {
             .resizable()
             .scaledToFill()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .accessibilityHidden(true)  // The button carries the label.
             .overlay(alignment: .bottom) {
                 if showLabel && !tile.label.isEmpty {
                     Text(tile.label)
