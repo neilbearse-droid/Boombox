@@ -14,6 +14,8 @@ struct TileButton: View {
     let isAudiblyPlaying: Bool
     let isLoading: Bool
     let artwork: Artwork?
+    var textScale: Double = 1.0
+    var highContrast: Bool = false
     let action: () -> Void
 
     private var swatch: TileSwatch { TilePalette.swatch(tile.colourID) }
@@ -26,7 +28,8 @@ struct TileButton: View {
                     icon
                     if showLabel && !tile.label.isEmpty {
                         Text(tile.label)
-                            .font(.system(size: 22, weight: .semibold, design: .rounded))
+                            .font(.system(
+                                size: 22 * textScale, weight: .semibold, design: .rounded))
                             .foregroundStyle(swatch.textColor(calmMode: calmMode))
                             .lineLimit(2)
                             .multilineTextAlignment(.center)
@@ -52,6 +55,11 @@ struct TileButton: View {
             .background(
                 RoundedRectangle(cornerRadius: 24)
                     .fill(swatch.background(calmMode: calmMode)))
+            .overlay(
+                RoundedRectangle(cornerRadius: 24)
+                    .strokeBorder(
+                        swatch.textColor(calmMode: calmMode).opacity(0.9),
+                        lineWidth: highContrast ? 4 : 0))
         }
         .buttonStyle(TilePressStyle(calmMode: calmMode))
         .accessibilityLabel(tile.label)

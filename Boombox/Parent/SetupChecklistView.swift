@@ -100,6 +100,14 @@ struct SetupChecklistView: View {
             } footer: {
                 Text("If taps still land more than once with Reduce Repeat Taps on, try Settings > Accessibility > Touch > Touch Accommodations. Hold Duration requires a brief press before a touch counts, and Ignore Repeat treats repeated touches as one — enforced system-wide.")
             }
+
+            Section {
+                Label("Music Haptics", systemImage: "hand.tap")
+            } header: {
+                Text("Feeling the Music")
+            } footer: {
+                Text("For a listener who is deaf or hard of hearing, turn on Settings > Accessibility > Music Haptics. The iPhone then taps out the rhythm of the music through its Taptic Engine while Boombox plays. It works automatically with the Apple Music that Boombox uses.")
+            }
         }
         .navigationTitle("Setup Checklist")
         .navigationBarTitleDisplayMode(.inline)

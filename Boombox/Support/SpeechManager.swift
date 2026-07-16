@@ -13,6 +13,9 @@ import Observation
 final class SpeechManager {
     @ObservationIgnored private let synthesizer = AVSpeechSynthesizer()
     @ObservationIgnored private let delegateProxy = DelegateProxy()
+    /// Multiplies the base speech rate; set from AppSettings.speechRate so a
+    /// slower voice is easier to parse for some listeners.
+    @ObservationIgnored var rateMultiplier: Double = 1.0
 
     init() {
         delegateProxy.onSpeechDone = { [weak self] in
@@ -32,7 +35,8 @@ final class SpeechManager {
             // Speak anyway; worst case is the old silent-switch behaviour.
         }
         let utterance = AVSpeechUtterance(string: text)
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.9
+        utterance.rate =
+            AVSpeechUtteranceDefaultSpeechRate * 0.9 * Float(rateMultiplier)
         synthesizer.speak(utterance)
     }
 

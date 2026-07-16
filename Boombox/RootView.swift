@@ -39,6 +39,7 @@ struct RootView: View {
             metrics.start(context: modelContext, playback: playback)
             metrics.pruneOldEvents()
             schedule.start(speech: speech)
+            speech.rateMultiplier = settings?.speechRate ?? 1.0
             await music.refreshLibrary()
             await updateWidgetSnapshot()
         }
@@ -59,6 +60,9 @@ struct RootView: View {
             if phase == .active {
                 Task { await music.refreshLibrary() }
             }
+        }
+        .onChange(of: settings?.speechRate) { _, rate in
+            speech.rateMultiplier = rate ?? 1.0
         }
         .fullScreenCover(isPresented: $showParentArea, onDismiss: {
             Task {

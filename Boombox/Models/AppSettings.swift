@@ -24,6 +24,12 @@ final class AppSettings {
     var quietEndMinutes: Int = 7 * 60
     /// Daily listening budget in minutes; 0 = no limit.
     var dailyLimitMinutes: Int = 0
+    /// Label / Now Playing text multiplier: 1.0 normal, 1.25 large, 1.5 huge.
+    var textScale: Double = 1.0
+    /// Spoken-confirmation speed multiplier: 1.0 normal, 0.75 slower.
+    var speechRate: Double = 1.0
+    /// Thick, auto-contrast borders on tiles for low vision.
+    var highContrastTiles: Bool = false
 
     init() {}
 

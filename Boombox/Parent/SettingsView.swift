@@ -85,6 +85,23 @@ private struct SettingsForm: View {
             }
 
             Section {
+                Picker("Text size", selection: $settings.textScale) {
+                    Text("Normal").tag(1.0)
+                    Text("Large").tag(1.25)
+                    Text("Huge").tag(1.5)
+                }
+                Toggle("High-contrast tiles", isOn: $settings.highContrastTiles)
+                Picker("Speaking speed", selection: $settings.speechRate) {
+                    Text("Normal").tag(1.0)
+                    Text("Slower").tag(0.75)
+                }
+            } header: {
+                Text("Seeing & Hearing")
+            } footer: {
+                Text("Larger text and bold tile borders help low vision. A slower speaking voice is easier to follow. For a listener who is deaf or hard of hearing, turn on Music Haptics (see the Setup Checklist) to feel the beat.")
+            }
+
+            Section {
                 Toggle("Quiet hours", isOn: $settings.quietHoursEnabled)
                 if settings.quietHoursEnabled {
                     DatePicker(

@@ -74,7 +74,9 @@ struct MusicWallView: View {
                                 isAudiblyPlaying: playback.playingTileID == tile.id
                                     && playerState.playbackStatus == .playing,
                                 isLoading: playback.startingTileID == tile.id,
-                                artwork: music.playlist(withID: tile.playlistID)?.artwork
+                                artwork: music.playlist(withID: tile.playlistID)?.artwork,
+                                textScale: settings.textScale,
+                                highContrast: settings.highContrastTiles
                             ) {
                                 handleTap(tile)
                             }

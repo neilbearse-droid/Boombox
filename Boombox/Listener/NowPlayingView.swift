@@ -49,12 +49,14 @@ struct NowPlayingView: View {
 
             VStack(spacing: 8) {
                 Text(tile.label)
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .font(.system(
+                        size: 30 * settings.textScale, weight: .bold, design: .rounded))
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                 if let title = queue.currentEntry?.title, !title.isEmpty {
                     Text(title)
-                        .font(.system(size: 19, weight: .medium, design: .rounded))
+                        .font(.system(
+                            size: 19 * settings.textScale, weight: .medium, design: .rounded))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }

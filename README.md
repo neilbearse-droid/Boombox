@@ -120,6 +120,13 @@ Boombox/
   touches (tap-acuity trend), and the loudest playback volume observed.
 - Stronger tap feedback (Settings → Touch): heavier haptic so accepted
   taps are felt, which reduces re-tapping at the source.
+- Seeing & Hearing (Settings): parent-set text size (Normal/Large/Huge)
+  for labels and Now Playing, high-contrast tile borders (auto-contrast
+  colour) for low vision, and an adjustable speaking speed for spoken
+  confirmations. Music Haptics (deaf / hard of hearing) is pointed to in
+  the Setup Checklist — it's an iOS system feature that taps out the beat
+  through the Taptic Engine and works automatically with Boombox's Apple
+  Music playback.
 - Reduce repeat taps (Settings → Touch, off by default): for listeners
   whose taps land several times. One accepted wall tap per 1.5s across
   all tiles (stray touches often hit a neighbouring tile), pause/play
