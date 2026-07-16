@@ -49,6 +49,7 @@ struct RootView: View {
             schedule.start(speech: speech)
             speech.rateMultiplier = settings?.speechRate ?? 1.0
             speech.pitchMultiplier = settings?.speechPitch ?? 1.0
+            speech.prewarm()
             await music.refreshLibrary()
             await updateWidgetSnapshot()
         }
