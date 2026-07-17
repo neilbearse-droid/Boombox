@@ -233,6 +233,24 @@ TestFlight via the paid developer account. Builds are valid 90 days;
 refresh by pushing a new build. Recommend pairing with iOS Guided Access
 for full lockdown (linked from the Setup Checklist).
 
+## Siri
+
+"Hey Siri, play the dragon music" plays a configured tile by its spoken
+name (`Siri/TileShortcuts.swift`). The intent's parameter is a constrained
+`TileEntity` whose query returns only the caregiver's configured, non-hidden
+tiles (and honours the `allowSiri` setting) — so voice can **never** reach
+arbitrary catalogue music; the curation model survives the voice layer.
+The intent hands the tile id to the app via `PlaybackIntentBridge`, and the
+wall plays it through the normal tap path, so schedules, the daily limit,
+and the explicit filter all still apply. App Shortcut phrases refresh
+(`updateAppShortcutParameters`) whenever the wall changes.
+
+Honest limit: this only constrains *Boombox's* voice commands. Siri can
+still play any Apple Music by voice at the OS level, independent of the app.
+The defence against that is Guided Access (disables Siri while locked) or
+Screen Time content restrictions — both surfaced in the Setup Checklist.
+Toggle the whole feature off with Settings → Sound & Speech → Siri.
+
 ## Out of scope for v1
 
 Sleep timer, multiple listener profiles, remote management from a second

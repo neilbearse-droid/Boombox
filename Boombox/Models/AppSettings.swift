@@ -32,6 +32,9 @@ final class AppSettings {
     var speechPitch: Double = 1.0
     /// First-run onboarding has been completed.
     var hasOnboarded: Bool = false
+    /// Expose tiles as Siri phrases ("play the dragon music"). Only ever
+    /// plays configured tiles — never arbitrary catalogue music.
+    var allowSiri: Bool = true
     /// Thick, auto-contrast borders on tiles for low vision.
     var highContrastTiles: Bool = false
     /// Show big-text lyrics on Now Playing (best-effort, community source).

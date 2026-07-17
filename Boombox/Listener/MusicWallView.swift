@@ -12,6 +12,7 @@ struct MusicWallView: View {
     @Environment(ScheduleService.self) private var schedule
     @Query(sort: \Tile.sortIndex) private var tiles: [Tile]
     @ObservedObject private var playerState = SystemMusicPlayer.shared.state
+    @Environment(\.scenePhase) private var scenePhase
 
     let settings: AppSettings
     let openParentGate: () -> Void
@@ -109,6 +110,23 @@ struct MusicWallView: View {
             else { return }
             handleTap(tile)
         }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { playPendingSiriTile() }
+        }
+        .task {
+            playPendingSiriTile()
+        }
+    }
+
+    /// Plays a tile requested by a Siri App Intent, through the same tap path
+    /// so schedules, limits, and the explicit filter all apply. The intent
+    /// can only ever request a configured tile, never arbitrary music.
+    private func playPendingSiriTile() {
+        guard let id = PlaybackIntentBridge.consumePendingTileID(),
+            let tile = tiles.first(where: { $0.id == id }),
+            !tile.isHidden, !music.isOrphaned(tile)
+        else { return }
+        handleTap(tile)
     }
 
     private func handleTap(_ tile: Tile) {

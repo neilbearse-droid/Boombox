@@ -82,7 +82,7 @@ struct SetupChecklistView: View {
             } header: {
                 Text("Lockdown")
             } footer: {
-                Text("Guided Access keeps the phone in this app. Triple-click the side button to start and stop it.")
+                Text("Guided Access keeps the phone in this app and turns Siri off while locked. Triple-click the side button to start and stop it. Boombox's own Siri commands only ever play tiles you set up — but Siri can otherwise play any music by voice, and Guided Access is what stops that.")
             }
 
             Section {

@@ -135,6 +135,14 @@ private struct SoundSpeechSettings: View {
             } footer: {
                 Text("When on, the phone says the tile's spoken name as it starts. Use each tile's own words. A plainer, slower voice suits some adult listeners better.")
             }
+
+            Section {
+                Toggle("Siri voice control", isOn: $settings.allowSiri)
+            } header: {
+                Text("Siri")
+            } footer: {
+                Text("Lets \u{201C}Hey Siri, play the dragon music\u{201D} start a tile by its spoken name. Siri can only ever play tiles you set up — never other music. To stop Siri from playing anything else on the phone, use Guided Access (see the Setup Checklist), which turns Siri off while Boombox is locked.")
+            }
         }
         .navigationTitle("Sound & Speech")
         .navigationBarTitleDisplayMode(.inline)

@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftData
 import SwiftUI
 
@@ -96,6 +97,8 @@ struct RootView: View {
         let tiles = (try? modelContext.fetch(FetchDescriptor<Tile>())) ?? []
         await WidgetSnapshotStore.write(
             tiles: tiles, calmMode: settings.calmMode, music: music)
+        // Refresh Siri's tile phrases after any change to the wall.
+        BoomboxShortcuts.updateAppShortcutParameters()
     }
 
     /// Visually quiet, responds only to a sustained 2-second hold, so stray
