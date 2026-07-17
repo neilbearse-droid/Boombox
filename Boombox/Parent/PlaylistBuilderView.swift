@@ -25,13 +25,27 @@ struct PlaylistBuilderView: View {
     @State private var isSearching = false
     @State private var isCreating = false
     @State private var errorMessage: String?
+    @State private var searchError: String?
+    @State private var didSearch = false
     @State private var previewPlayer = PreviewPlayer()
+
+    private var hasResults: Bool {
+        !songs.isEmpty || !albums.isEmpty || !artists.isEmpty
+    }
 
     var body: some View {
         NavigationStack {
             List {
                 Section("Playlist Name") {
                     TextField("Name", text: $name)
+                }
+
+                if let searchError {
+                    Section {
+                        Label(searchError, systemImage: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                            .font(.footnote)
+                    }
                 }
 
                 if !draft.isEmpty {
@@ -122,6 +136,17 @@ struct PlaylistBuilderView: View {
                         }
                     }
                 }
+                if searchError == nil, !isSearching, !hasResults {
+                    Section {
+                        ContentUnavailableView(
+                            didSearch ? "No results" : "Search for songs",
+                            systemImage: "magnifyingglass",
+                            description: Text(
+                                didSearch
+                                    ? "Try a different name."
+                                    : "Type a song, album, or artist above, then add songs with the + button."))
+                    }
+                }
             }
             .searchable(
                 text: $searchTerm,
@@ -129,6 +154,19 @@ struct PlaylistBuilderView: View {
                 prompt: "Search Apple Music")
             .onSubmit(of: .search) {
                 Task { await search() }
+            }
+            .task(id: searchTerm) {
+                // Live search, debounced, so results appear as you type
+                // without needing to hit the keyboard's Search key.
+                let term = searchTerm.trimmingCharacters(in: .whitespaces)
+                guard !term.isEmpty else {
+                    songs = []; albums = []; artists = []
+                    searchError = nil; didSearch = false
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(350))
+                guard !Task.isCancelled else { return }
+                await search()
             }
             .navigationTitle("New Playlist")
             .navigationBarTitleDisplayMode(.inline)
@@ -143,9 +181,10 @@ struct PlaylistBuilderView: View {
                     if isCreating {
                         ProgressView()
                     } else {
-                        Button("Create") {
+                        Button("Save") {
                             Task { await createPlaylist() }
                         }
+                        .fontWeight(.semibold)
                         .disabled(
                             name.trimmingCharacters(in: .whitespaces).isEmpty
                                 || draft.isEmpty)
@@ -177,7 +216,17 @@ struct PlaylistBuilderView: View {
         let term = searchTerm.trimmingCharacters(in: .whitespaces)
         guard !term.isEmpty else { return }
         isSearching = true
-        defer { isSearching = false }
+        searchError = nil
+        defer {
+            isSearching = false
+            didSearch = true
+        }
+        // Catalogue search needs Music authorization; request it if the
+        // caregiver reached the builder without it (rare) so search isn't
+        // silently empty.
+        if MusicAuthorization.currentStatus != .authorized {
+            _ = await MusicAuthorization.request()
+        }
         do {
             var request = MusicCatalogSearchRequest(
                 term: term, types: [Song.self, Album.self, Artist.self])
@@ -195,6 +244,8 @@ struct PlaylistBuilderView: View {
             songs = []
             albums = []
             artists = []
+            // Surface the reason instead of silently showing nothing.
+            searchError = "Search failed: \(error.localizedDescription)"
         }
     }
 
