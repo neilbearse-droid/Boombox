@@ -46,6 +46,7 @@ struct RootView: View {
             }
             metrics.start(context: modelContext, playback: playback)
             metrics.pruneOldEvents()
+            playback.startMonitoring()
             schedule.start(speech: speech)
             speech.rateMultiplier = settings?.speechRate ?? 1.0
             speech.pitchMultiplier = settings?.speechPitch ?? 1.0
